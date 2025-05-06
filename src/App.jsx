@@ -1,9 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, PenLine, Paintbrush2, Gamepad2, Coffee, Monitor, Laptop } from "lucide-react";
+import { BookOpen, PenLine, Paintbrush2, Gamepad2, Coffee, Monitor, Laptop, Menu, X } from "lucide-react";
 
 export default function App() {
   const [activePage, setActivePage] = useState('landing');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Determine if we're on mobile based on window width
+  const isMobile = windowWidth < 768;
 
   const portfolioData = {
     name: "Bernalyn M. Benedicto",
@@ -119,13 +137,13 @@ export default function App() {
         boxShadow: 'inset 0 0 100px rgba(139, 92, 246, 0.2)'
       }}>
       <div className="flex flex-col items-center justify-center h-full w-full text-center px-4">
-        <div className="w-48 h-48 rounded-full overflow-hidden mb-6 border-4 border-purple-400"
+        <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden mb-6 border-4 border-purple-400"
           style={{
             boxShadow: '0 0 30px rgba(167, 139, 250, 0.5)'
           }}>
           <img src="/images/berna2.jpg" alt={portfolioData.name} className="w-full h-full object-cover" />
         </div>
-        <h1 className="text-3xl font-bold mb-2"
+        <h1 className="text-2xl md:text-3xl font-bold mb-2"
           style={{
             background: 'linear-gradient(to right, #9333ea, #6366f1)',
             WebkitBackgroundClip: 'text',
@@ -133,7 +151,7 @@ export default function App() {
           }}>
           {portfolioData.name}
         </h1>
-        <p className="text-lg text-purple-600 mb-8">{portfolioData.shortBio}</p>
+        <p className="text-base md:text-lg text-purple-600 mb-8">{portfolioData.shortBio}</p>
 
         {/* Instead of showing all navigation buttons, just show the Get To Know Me More button */}
         <GetToKnowMeButton onClick={() => setActivePage('about')} />
@@ -141,38 +159,65 @@ export default function App() {
     </motion.div>
   );
 
-  const Sidebar = () => (
-    <div className="w-64 fixed left-0 top-0 h-full pt-6 px-4 bg-gradient-to-b from-purple-50 to-purple-100 shadow-lg z-50"
-      style={{
-        boxShadow: '4px 0 15px rgba(139, 92, 246, 0.1)'
-      }}>
-      <div className="flex flex-col items-center mb-10">
-        <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-purple-400"
-          style={{
-            boxShadow: '0 0 15px rgba(167, 139, 250, 0.4)'
-          }}>
-          <img src="/images/berna2.jpg" alt={portfolioData.name} className="w-full h-full object-cover" />
-        </div>
-        <h2 className="text-xl font-bold text-purple-700 text-center">{portfolioData.name}</h2>
-        <p className="text-sm text-purple-600 text-center mt-1 mb-6">{portfolioData.shortBio.split(",")[0]}</p>
-      </div>
-
-      <div className="space-y-2">
-        <CloudButton onClick={() => setActivePage('landing')} isActive={activePage === 'landing'}>
-          Home
-        </CloudButton>
-        <CloudButton onClick={() => setActivePage('about')} isActive={activePage === 'about'}>
-          About Me
-        </CloudButton>
-        <CloudButton onClick={() => setActivePage('projects')} isActive={activePage === 'projects'}>
-          Made & Achieved
-        </CloudButton>
-        <CloudButton onClick={() => setActivePage('socials')} isActive={activePage === 'socials'}>
-          Socials
-        </CloudButton>
-      </div>
-    </div>
+  const MobileMenuButton = () => (
+    <button
+      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      className="fixed top-4 right-4 z-50 p-2 rounded-full bg-purple-600 text-white shadow-lg"
+    >
+      {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+    </button>
   );
+
+  const Sidebar = () => {
+    const sidebarClasses = isMobile
+      ? `fixed inset-0 z-40 bg-gradient-to-b from-purple-50 to-purple-100 shadow-lg pt-16 px-4 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`
+      : 'w-64 fixed left-0 top-0 h-full pt-6 px-4 bg-gradient-to-b from-purple-50 to-purple-100 shadow-lg z-40';
+
+    return (
+      <div className={sidebarClasses}
+        style={{
+          boxShadow: '4px 0 15px rgba(139, 92, 246, 0.1)'
+        }}>
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mb-4 border-2 border-purple-400"
+            style={{
+              boxShadow: '0 0 15px rgba(167, 139, 250, 0.4)'
+            }}>
+            <img src="/images/berna2.jpg" alt={portfolioData.name} className="w-full h-full object-cover" />
+          </div>
+          <h2 className="text-lg md:text-xl font-bold text-purple-700 text-center">{portfolioData.name}</h2>
+          <p className="text-xs md:text-sm text-purple-600 text-center mt-1 mb-6">{portfolioData.shortBio.split(",")[0]}</p>
+        </div>
+
+        <div className="space-y-2">
+          <CloudButton onClick={() => {
+            setActivePage('landing');
+            if (isMobile) setIsMobileMenuOpen(false);
+          }} isActive={activePage === 'landing'}>
+            Home
+          </CloudButton>
+          <CloudButton onClick={() => {
+            setActivePage('about');
+            if (isMobile) setIsMobileMenuOpen(false);
+          }} isActive={activePage === 'about'}>
+            About Me
+          </CloudButton>
+          <CloudButton onClick={() => {
+            setActivePage('projects');
+            if (isMobile) setIsMobileMenuOpen(false);
+          }} isActive={activePage === 'projects'}>
+            Made & Achieved
+          </CloudButton>
+          <CloudButton onClick={() => {
+            setActivePage('socials');
+            if (isMobile) setIsMobileMenuOpen(false);
+          }} isActive={activePage === 'socials'}>
+            Socials
+          </CloudButton>
+        </div>
+      </div>
+    );
+  };
 
   const AboutMeContent = () => (
     <motion.div
@@ -182,12 +227,12 @@ export default function App() {
       transition={{ duration: 0.5 }}
       className="max-w-2xl mx-auto"
     >
-      <div className="bg-white p-8 rounded-2xl shadow-lg"
+      <div className="bg-white p-4 md:p-8 rounded-2xl shadow-lg"
         style={{
           background: 'linear-gradient(to bottom right, #ffffff, #f5f3ff)',
           boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.2)'
         }}>
-        <h2 className="text-2xl font-bold mb-6"
+        <h2 className="text-xl md:text-2xl font-bold mb-6"
           style={{
             background: 'linear-gradient(to right, #9333ea, #7e22ce)',
             WebkitBackgroundClip: 'text',
@@ -197,81 +242,81 @@ export default function App() {
         </h2>
         <p className="text-gray-700 mb-8">{portfolioData.fullBio}</p>
 
-        <h3 className="text-xl font-semibold text-purple-700 mb-4">Skills</h3>
+        <h3 className="text-lg md:text-xl font-semibold text-purple-700 mb-4">Skills</h3>
         <div className="flex flex-wrap gap-2 mb-8">
           {["React", "JavaScript", "HTML5", "CSS3", "Tailwind CSS", "Vite", "UI/UX Design", "Responsive Design"].map((skill, index) => (
-            <span key={index} className="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium"
+            <span key={index} className="bg-purple-100 text-purple-700 px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
               style={{ boxShadow: '0 2px 4px rgba(139, 92, 246, 0.1)' }}>
               {skill}
             </span>
           ))}
         </div>
 
-        <h3 className="text-xl font-semibold text-purple-700 mb-4">Hobbies</h3>
-        <div className="space-y-6">
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <BookOpen className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Reading Books & Writing Stories</h4>
+        <h3 className="text-lg md:text-xl font-semibold text-purple-700 mb-4">Hobbies</h3>
+        <div className="space-y-4 md:space-y-6">
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <BookOpen className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Reading Books & Writing Stories</h4>
             </div>
-            <p className="text-gray-700">
-              I really enjoy reading books and writing stories. It’s how I express my thoughts and imagination through the art of storytelling.
+            <p className="text-gray-700 text-sm md:text-base">
+              I really enjoy reading books and writing stories. It's how I express my thoughts and imagination through the art of storytelling.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <Paintbrush2 className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Drawing & Painting</h4>
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Paintbrush2 className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Drawing & Painting</h4>
             </div>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               I also love drawing and painting, especially on rainy days—I find it very calming and relaxing.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <Gamepad2 className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Online Games</h4>
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Gamepad2 className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Online Games</h4>
             </div>
-            <p className="text-gray-700">
-              Playing online games like Mobile Legends and Call of Duty has become a hobby too. I usually play when I’m bored or when my friends invite me to join.
+            <p className="text-gray-700 text-sm md:text-base">
+              Playing online games like Mobile Legends and Call of Duty has become a hobby too. I usually play when I'm bored or when my friends invite me to join.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <Coffee className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Exploring Cafes</h4>
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Coffee className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Exploring Cafes</h4>
             </div>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Discovering new coffee spots inspires me and gives me a relaxing space to reflect, plan, or simply enjoy a good latte.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <Monitor className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Watching Design & Tech Videos</h4>
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Monitor className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Watching Design & Tech Videos</h4>
             </div>
-            <p className="text-gray-700">
+            <p className="text-gray-700 text-sm md:text-base">
               Whether it's a new UI trend or a clever CSS trick, I love staying updated and inspired by the web dev community online.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
-            <div className="flex items-center gap-3 mb-2">
-              <Laptop className="text-purple-700" />
-              <h4 className="font-medium text-purple-800 text-lg">Learning New Skills</h4>
+          <div className="p-3 md:p-5 rounded-xl" style={{ background: 'rgba(237, 233, 254, 0.5)' }}>
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Laptop className="text-purple-700 w-4 h-4 md:w-5 md:h-5" />
+              <h4 className="font-medium text-purple-800 text-base md:text-lg">Learning New Skills</h4>
             </div>
-            <p className="text-gray-700">
-              I’m always exploring new tools, frameworks, and techniques to grow as a developer and improve the way I build things.
+            <p className="text-gray-700 text-sm md:text-base">
+              I'm always exploring new tools, frameworks, and techniques to grow as a developer and improve the way I build things.
             </p>
           </div>
         </div>
-        </div>
+      </div>
     </motion.div>
-    );
+  );
 
   const ProjectsContent = () => (
     <motion.div
@@ -281,12 +326,12 @@ export default function App() {
       transition={{ duration: 0.5 }}
       className="max-w-2xl mx-auto"
     >
-      <div className="bg-white p-8 rounded-2xl shadow-lg"
+      <div className="bg-white p-4 md:p-8 rounded-2xl shadow-lg"
         style={{
           background: 'linear-gradient(to bottom right, #ffffff, #f5f3ff)',
           boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.2)'
         }}>
-        <h2 className="text-2xl font-bold mb-6"
+        <h2 className="text-xl md:text-2xl font-bold mb-6"
           style={{
             background: 'linear-gradient(to right, #9333ea, #7e22ce)',
             WebkitBackgroundClip: 'text',
@@ -294,25 +339,25 @@ export default function App() {
           }}>
           Projects
         </h2>
-        <div className="grid gap-6 mb-10">
+        <div className="grid gap-4 md:gap-6 mb-8 md:mb-10">
           {portfolioData.projects.map((project, index) => (
             <motion.div
               key={index}
-              className="p-6 rounded-xl"
+              className="p-4 md:p-6 rounded-xl"
               style={{
                 background: 'linear-gradient(145deg, #ede9fe, #ddd6fe)',
                 boxShadow: '0 4px 15px rgba(139, 92, 246, 0.15)'
               }}
               whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(139, 92, 246, 0.25)' }}
             >
-              <h3 className="text-lg font-medium text-purple-800 mb-3">{project.title}</h3>
-              <p className="text-gray-700 mb-4">{project.description}</p>
+              <h3 className="text-base md:text-lg font-medium text-purple-800 mb-2 md:mb-3">{project.title}</h3>
+              <p className="text-gray-700 text-sm md:text-base mb-3 md:mb-4">{project.description}</p>
               {project.link && (
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-4 py-2 rounded-full bg-purple-600 text-white font-medium transition-all hover:bg-purple-700 hover:shadow-lg"
+                  className="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full bg-purple-600 text-white text-xs md:text-sm font-medium transition-all hover:bg-purple-700 hover:shadow-lg"
                 >
                   View Project
                 </a>
@@ -321,7 +366,7 @@ export default function App() {
           ))}
         </div>
 
-        <h2 className="text-2xl font-bold mb-6"
+        <h2 className="text-xl md:text-2xl font-bold mb-6"
           style={{
             background: 'linear-gradient(to right, #9333ea, #7e22ce)',
             WebkitBackgroundClip: 'text',
@@ -329,25 +374,25 @@ export default function App() {
           }}>
           Activities
         </h2>
-        <div className="grid gap-6 mb-10">
+        <div className="grid gap-4 md:gap-6 mb-8 md:mb-10">
           {portfolioData.activities.map((activity, index) => (
             <motion.div
               key={index}
-              className="p-6 rounded-xl"
+              className="p-4 md:p-6 rounded-xl"
               style={{
                 background: 'linear-gradient(145deg, #f5f3ff, #ede9fe)',
                 boxShadow: '0 4px 15px rgba(139, 92, 246, 0.1)'
               }}
               whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(139, 92, 246, 0.2)' }}
             >
-              <h3 className="text-lg font-medium text-purple-800 mb-3">{activity.title}</h3>
-              <p className="text-gray-700 mb-4">{activity.description}</p>
+              <h3 className="text-base md:text-lg font-medium text-purple-800 mb-2 md:mb-3">{activity.title}</h3>
+              <p className="text-gray-700 text-sm md:text-base mb-3 md:mb-4">{activity.description}</p>
               {activity.link && (
                 <a
                   href={activity.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block px-4 py-2 rounded-full bg-purple-500 text-white font-medium transition-all hover:bg-purple-600 hover:shadow-lg"
+                  className="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full bg-purple-500 text-white text-xs md:text-sm font-medium transition-all hover:bg-purple-600 hover:shadow-lg"
                 >
                   View Activity
                 </a>
@@ -356,8 +401,8 @@ export default function App() {
           ))}
         </div>
 
-        <h2 className="text-2xl font-bold text-purple-800 mb-4">Achievements</h2>
-        <div className="grid gap-6">
+        <h2 className="text-xl md:text-2xl font-bold text-purple-800 mb-4">Achievements</h2>
+        <div className="grid gap-4 md:gap-6 md:grid-cols-2">
           {portfolioData.achievements.map((achievement, index) => (
             <motion.div
               key={index}
@@ -369,9 +414,9 @@ export default function App() {
                 alt={achievement.title}
                 className="w-full h-auto object-contain bg-gray-50"
               />
-              <div className="p-4">
-                <h3 className="text-lg font-medium text-purple-800 mb-1">{achievement.title}</h3>
-                <p className="text-gray-600 text-sm">{achievement.caption}</p>
+              <div className="p-3 md:p-4">
+                <h3 className="text-base md:text-lg font-medium text-purple-800 mb-1">{achievement.title}</h3>
+                <p className="text-gray-600 text-xs md:text-sm">{achievement.caption}</p>
               </div>
             </motion.div>
           ))}
@@ -388,12 +433,12 @@ export default function App() {
       transition={{ duration: 0.5 }}
       className="max-w-2xl mx-auto"
     >
-      <div className="bg-white p-8 rounded-2xl shadow-lg"
+      <div className="bg-white p-4 md:p-8 rounded-2xl shadow-lg"
         style={{
           background: 'linear-gradient(to bottom right, #ffffff, #f5f3ff)',
           boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.2)'
         }}>
-        <h2 className="text-2xl font-bold mb-8 text-center"
+        <h2 className="text-xl md:text-2xl font-bold mb-6 md:mb-8 text-center"
           style={{
             background: 'linear-gradient(to right, #9333ea, #7e22ce)',
             WebkitBackgroundClip: 'text',
@@ -401,14 +446,14 @@ export default function App() {
           }}>
           Connect With Me
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
           {portfolioData.socials.map((social, index) => (
             <motion.a
               key={index}
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center p-4 rounded-xl transition-all"
+              className="flex items-center p-3 md:p-4 rounded-xl transition-all"
               style={{
                 background: 'linear-gradient(145deg, #f5f3ff, #ede9fe)',
                 boxShadow: '0 4px 6px rgba(139, 92, 246, 0.1)'
@@ -419,28 +464,28 @@ export default function App() {
                 background: 'linear-gradient(145deg, #ede9fe, #ddd6fe)'
               }}
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mr-4"
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mr-3 md:mr-4"
                 style={{
                   background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)',
                   boxShadow: '0 4px 8px rgba(139, 92, 246, 0.3)'
                 }}>
-                <i className={`${social.icon} text-white text-lg`}></i>
+                <i className={`${social.icon} text-white text-sm md:text-lg`}></i>
               </div>
               <div>
-                <h3 className="font-medium text-purple-800">{social.platform}</h3>
-                <p className="text-purple-600 text-sm">{social.username}</p>
+                <h3 className="font-medium text-purple-800 text-sm md:text-base">{social.platform}</h3>
+                <p className="text-purple-600 text-xs md:text-sm">{social.username}</p>
               </div>
             </motion.a>
           ))}
         </div>
 
-        <div className="mt-10 p-8 rounded-xl text-center"
+        <div className="mt-6 md:mt-10 p-4 md:p-8 rounded-xl text-center"
           style={{
             background: 'linear-gradient(135deg, #f3e8ff, #ede9fe)',
             boxShadow: 'inset 0 2px 10px rgba(139, 92, 246, 0.2)'
           }}>
-          <h3 className="font-bold text-purple-800 text-xl mb-4">Send Me a Message</h3>
-          <p className="text-gray-700 mb-6">Interested in working together? Feel free to reach out via email or any of my social platforms. Gracias!</p>
+          <h3 className="font-bold text-purple-800 text-lg md:text-xl mb-3 md:mb-4">Send Me a Message</h3>
+          <p className="text-gray-700 text-sm md:text-base mb-4 md:mb-6">Interested in working together? Feel free to reach out via email or any of my social platforms. Gracias!</p>
         </div>
       </div>
     </motion.div>
@@ -465,15 +510,28 @@ export default function App() {
         background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #ddd6fe 100%)',
         backgroundAttachment: 'fixed'
       }}>
+      {/* Show mobile menu button only on non-landing pages */}
+      {activePage !== 'landing' && isMobile && <MobileMenuButton />}
+
+      {/* Sidebar (desktop or mobile) */}
       {activePage !== 'landing' && <Sidebar />}
 
-      <main className={`${activePage !== 'landing' ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
-        <div className="container mx-auto px-4 py-8">
+      {/* Main content with responsive padding */}
+      <main className={`transition-all duration-300 ease-in-out ${activePage !== 'landing' ? (isMobile ? 'pt-16' : 'md:ml-64') : ''}`}>
+        <div className="container mx-auto px-4 py-4 md:py-8">
           <AnimatePresence mode="wait">
             <MainContent key={activePage} />
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Semi-transparent overlay when mobile menu is open */}
+      {isMobile && isMobileMenuOpen && activePage !== 'landing' && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
       {/* Import Font Awesome */}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
