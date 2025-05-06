@@ -13,28 +13,23 @@ export default function App() {
         title: "To-do-list Web App",
         description: "A simple and responsive task management app built with React and Tailwind CSS. Users can add, update, delete, and move tasks between Ongoing and Completed sections. The interface features a soft purple gradient and modern UI styling with smooth interactions.",
         link: "https://to-do-client1-t2k0.onrender.com"
-      },
-      {
-        title: "Task Management App",
-        description: "A drag-and-drop task management application with project categorization and deadline tracking.",
-        link: "https://github.com/yourusername/task-manager"
-      },
-      {
-        title: "Portfolio Website",
-        description: "This minimalist portfolio website showcasing my projects and skills using React, Vite and TailwindCSS.",
-        link: "https://yourportfolio.com"
       }
     ],
     activities: [
       {
-        title: "Web Development Workshop",
+        title: "Calculator",
         description: "Organized and led a workshop teaching React fundamentals to junior developers.",
-        link: "https://example.com/workshop-details"
+        link: "Activities/Calculator/index.html"
       },
       {
-        title: "Open Source Contributions",
+        title: "Loop",
         description: "Regular contributor to various open-source projects, focusing on UI component libraries.",
-        link: "https://github.com/yourusername/contributions"
+        link: "Activities/LOOP/index.html"
+      },
+      {
+        title: "Array Object",
+        description: "Regular contributor to various open-source projects, focusing on UI component libraries.",
+        link: "Activities/ARRAY_OBJECTS/index.html"
       }
     ],
     achievements: [
@@ -189,7 +184,7 @@ export default function App() {
             <p className="text-gray-700 mb-2">{activity.description}</p>
             {activity.link && (
               <a href={activity.link} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline text-sm">
-                View More
+                View Activity
               </a>
             )}
           </motion.div>
