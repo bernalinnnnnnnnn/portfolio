@@ -7,7 +7,7 @@ export default function App() {
 
   const portfolioData = {
     name: "Bernalyn M. Benedicto",
-    shortBio: "A Third Year BSIT Student, Front-End Developer & UI/UX Designer",
+    shortBio: "A Third Year BSIT Student, Student Developer & Full Stack Enthusiast",
     fullBio: "I'm a passionate third-year IT student developer studying at the University of Abra. I enjoy coding even if it drives me a little crazy sometimes! I love turning my ideas into reality, and I have experience working with web applications using React, Tailwind CSS, modern JavaScript, and more. I also enjoy exploring the world of web development and I'm always eager to learn new things to keep improving my skills.",
     email: "benedictobernalyn52@gmail.com",
     phone: "+63 970 833 5852",
