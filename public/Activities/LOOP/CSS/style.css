@@ -1,0 +1,70 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #1c1c1c;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    background-image: url(./images/kuromi2.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+
+.container {
+    background-color: rgba(46, 27, 43, 0.6);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(237, 127, 236, 0.7);
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #e65df5;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    background: #1c1c1c;
+    color: white;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #c151dd;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #9d1696;
+    transform: scale(1.05);
+}
+
+#display {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #cc81e0;
+}
+
+

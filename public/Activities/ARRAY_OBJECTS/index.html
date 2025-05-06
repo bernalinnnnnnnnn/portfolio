@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array</title>
+    <link rel="stylesheet" href="./CSS/style.css">
+
+    <script>
+        let names = ["andrea", "cielo", "bernalyn", "toni"]; // global variable
+        let employees = [ //inside the curly braces are objects/ 1 object
+            {
+                "emp_id": "123",
+                "names": "Elon Musk",
+                "position": "CEO"
+            },
+            {
+                "emp_id": "143",
+                "names": "Bill Gates",
+                "position": "Supervisor"
+            }
+        ]
+    </script>
+
+    <script src="./JS/array.js"></script>
+    <script src="./JS/object.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Lists</h2>
+            <form id="lists-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+                <button type="button" onclick="addName()">ADD</button>
+                <button type="button" onclick="showAll()">SHOW ALL</button>
+            </form>
+
+            <h2>Employee Information</h2>
+            <form id="employee-form">
+                <label for="emp_id">Employee ID:</label>
+                <input type="text" id="emp_id" name="emp_id">
+
+                <label for="emp_name">Name:</label>
+                <input type="text" id="names" name="emp_name">
+
+                <label for="emp_position">Position:</label>
+                <input type="text" id="position" name="emp_position">
+
+                <button type="button" onclick="addEmployee()">ADD EMPLOYEE</button>
+                <button type="button" onclick="showEmployees()">SHOW EMPLOYEE</button>
+            </form>
+        </div>
+        <div class="list-container">
+            <div id="list-container">
+                <h2>Lists Display</h2>
+                <div id="list"></div>
+            </div>
+
+            <div id="employee-container">
+                <h2>Employee Table</h2>
+                <table id="employee">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Position</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
